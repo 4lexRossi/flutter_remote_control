@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.roku_remote_control">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-feature android:name="android.hardware.wifi" />
+
    <application
         android:label="roku_remote_control"
         android:name="${applicationName}"
