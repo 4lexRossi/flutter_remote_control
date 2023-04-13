@@ -1,96 +1,132 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:wifi_iot/wifi_iot.dart';
 
-import 'Tv.dart';
+import 'tv.dart';
 
-class RemoteControlPage extends StatefulWidget {
+class RemoteControl extends StatefulWidget {
   @override
-  _RemoteControlPageState createState() => _RemoteControlPageState();
+  _RemoteControlState createState() => _RemoteControlState();
 }
 
-class _RemoteControlPageState extends State<RemoteControlPage> {
-  Tv tv = Tv();
+class _RemoteControlState extends State<RemoteControl> {
+  final _textController = TextEditingController();
+  final _tv = Tv();
+  bool _isConnected = false;
+
+  Future<void> _connectToWifi() async {
+    String ssid = _textController.text;
+    String password = '0859132103374564';
+    bool isConnected;
+
+    try {
+      await WiFiForIoTPlugin.connect(ssid, password: password);
+      isConnected = true;
+    } catch (e) {
+      isConnected = false;
+    }
+
+    setState(() {
+      _isConnected = isConnected;
+    });
+  }
+
+  void _disconnectFromWifi() {
+    WiFiForIoTPlugin.disconnect();
+    setState(() {
+      _isConnected = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Remote Control'),
+        title: Text('Remote Control'),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 32.0),
+            SizedBox(height: 32.0),
+            TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Wi-Fi SSID',
+              ),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: _connectToWifi,
+              child: Text('Connect to Wi-Fi'),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: _disconnectFromWifi,
+              child: Text('Disconnect from Wi-Fi'),
+            ),
+            SizedBox(height: 32.0),
             Text(
-              'TV Status: ${tv.status}',
+              'TV Status: ${_tv.status}',
               style: TextStyle(fontSize: 20.0),
             ),
-            const SizedBox(height: 32.0),
-            ElevatedButton(
-              child: const Text('Power'),
-              onPressed: () {
-                setState(() {
-                  tv.power();
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
+            SizedBox(height: 16.0),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_upward),
                   onPressed: () {
                     setState(() {
-                      tv.volumeUp();
+                      _tv.power();
                     });
                   },
+                  icon: Icon(Icons.power_settings_new),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _tv.channelDown();
+                    });
+                  },
+                  icon: Icon(Icons.arrow_left),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _tv.channelUp();
+                    });
+                  },
+                  icon: Icon(Icons.arrow_right),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _tv.volumeDown();
+                    });
+                  },
+                  icon: Icon(Icons.remove),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _tv.volumeUp();
+                    });
+                  },
+                  icon: Icon(Icons.add),
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    setState(() {
-                      tv.channelDown();
-                    });
-                  },
-                ),
-                const SizedBox(width: 32.0),
-                IconButton(
-                  icon: const Icon(Icons.play_arrow),
-                  onPressed: () {
-                    setState(() {
-                      tv.play();
-                    });
-                  },
-                ),
-                const SizedBox(width: 32.0),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    setState(() {
-                      tv.channelUp();
-                    });
-                  },
-                ),
-              ],
+            SizedBox(height: 32.0),
+            Text(
+              'Channel: ${_tv.channel}',
+              style: TextStyle(fontSize: 20.0),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_downward),
-                  onPressed: () {
-                    setState(() {
-                      tv.volumeDown();
-                    });
-                  },
-                ),
-              ],
+            SizedBox(height: 16.0),
+            Text(
+              'Volume: ${_tv.volume}',
+              style: TextStyle(fontSize: 20.0),
             ),
           ],
         ),
