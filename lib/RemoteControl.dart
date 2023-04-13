@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
 import 'tv.dart';
@@ -16,19 +15,19 @@ class _RemoteControlState extends State<RemoteControl> {
 
   Future<void> _connectToWifi() async {
     String ssid = _textController.text;
-    String password = '0859132103374564';
-    bool isConnected;
+    String password = '<password here>';
+    bool isConnected = false;
 
     try {
       await WiFiForIoTPlugin.connect(ssid, password: password);
       isConnected = true;
     } catch (e) {
-      isConnected = false;
+      print(e);
+    } finally {
+      setState(() {
+        _isConnected = isConnected;
+      });
     }
-
-    setState(() {
-      _isConnected = isConnected;
-    });
   }
 
   void _disconnectFromWifi() {
@@ -42,37 +41,37 @@ class _RemoteControlState extends State<RemoteControl> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Remote Control'),
+        title: const Text('Remote Control'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 32.0),
+            const SizedBox(height: 32.0),
             TextField(
               controller: _textController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Wi-Fi SSID',
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _connectToWifi,
-              child: Text('Connect to Wi-Fi'),
+              child: const Text('Connect to Wi-Fi'),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _disconnectFromWifi,
-              child: Text('Disconnect from Wi-Fi'),
+              child: const Text('Disconnect from Wi-Fi'),
             ),
-            SizedBox(height: 32.0),
+            const SizedBox(height: 32.0),
             Text(
               'TV Status: ${_tv.status}',
-              style: TextStyle(fontSize: 20.0),
+              style: const TextStyle(fontSize: 20.0),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -82,7 +81,7 @@ class _RemoteControlState extends State<RemoteControl> {
                       _tv.power();
                     });
                   },
-                  icon: Icon(Icons.power_settings_new),
+                  icon: const Icon(Icons.power_settings_new),
                 ),
                 IconButton(
                   onPressed: () {
@@ -90,7 +89,7 @@ class _RemoteControlState extends State<RemoteControl> {
                       _tv.channelDown();
                     });
                   },
-                  icon: Icon(Icons.arrow_left),
+                  icon: const Icon(Icons.arrow_left),
                 ),
                 IconButton(
                   onPressed: () {
@@ -98,7 +97,7 @@ class _RemoteControlState extends State<RemoteControl> {
                       _tv.channelUp();
                     });
                   },
-                  icon: Icon(Icons.arrow_right),
+                  icon: const Icon(Icons.arrow_right),
                 ),
                 IconButton(
                   onPressed: () {
@@ -106,7 +105,7 @@ class _RemoteControlState extends State<RemoteControl> {
                       _tv.volumeDown();
                     });
                   },
-                  icon: Icon(Icons.remove),
+                  icon: const Icon(Icons.remove),
                 ),
                 IconButton(
                   onPressed: () {
@@ -114,19 +113,19 @@ class _RemoteControlState extends State<RemoteControl> {
                       _tv.volumeUp();
                     });
                   },
-                  icon: Icon(Icons.add),
+                  icon: const Icon(Icons.add),
                 ),
               ],
             ),
-            SizedBox(height: 32.0),
+            const SizedBox(height: 32.0),
             Text(
               'Channel: ${_tv.channel}',
-              style: TextStyle(fontSize: 20.0),
+              style: const TextStyle(fontSize: 20.0),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               'Volume: ${_tv.volume}',
-              style: TextStyle(fontSize: 20.0),
+              style: const TextStyle(fontSize: 20.0),
             ),
           ],
         ),
